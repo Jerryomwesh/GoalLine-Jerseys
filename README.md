@@ -3,7 +3,7 @@
 A modern, single-page web application for browsing and shopping football jerseys from top leagues and teams around the world.
 
 ## Author
-Jerry (Moringa School)
+Jerry Omweno
 
 ## Description
 GoalLine Jerseys lets football fans explore leagues, view teams, and shop for their favorite team jerseys. The app fetches real football data from TheSportsDB public API and features a dynamic cart, real-time search, and a polished, responsive UI.

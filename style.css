@@ -136,3 +136,45 @@ form input {
     border: 1px solid #ddd;
     border-radius: 5px;
 }
+
+/* Footer Styles */
+#site-footer {
+    background: #222;
+    color: #fff;
+    padding: 18px 0 12px 0;
+    text-align: center;
+    position: relative;
+    width: 100%;
+    margin-top: 40px;
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.footer-content a {
+    color: #ffd700;
+    text-decoration: underline;
+    transition: color 0.2s;
+}
+
+.footer-content a:hover {
+    color: #fff200;
+}
+
+.footer-divider {
+    margin: 0 10px;
+    color: #888;
+}
+
+@media (min-width: 600px) {
+    .footer-content {
+        flex-direction: row;
+    }
+}

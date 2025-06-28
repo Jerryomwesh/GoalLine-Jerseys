@@ -104,6 +104,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function displayTeams(teams, leagueName) {
         jerseyContainer.innerHTML = `<h2>${leagueName} Teams</h2>`;
+        jerseyContainer.innerHTML += `<button class="back-to-leagues-btn">Back to Leagues</button>`;
         if (!teams || teams.length === 0) {
             jerseyContainer.innerHTML += '<p class="no-results">No teams found.</p>';
             return;
@@ -112,19 +113,21 @@ document.addEventListener("DOMContentLoaded", async () => {
             const teamCard = document.createElement("div");
             teamCard.classList.add("jersey-card", "team-card");
             teamCard.innerHTML = `
+                <img src="${team.strTeamBadge || 'https://via.placeholder.com/80?text=No+Logo'}" alt="Badge of ${team.strTeam} football club" style="width:80px; height:80px; object-fit:contain; margin-bottom:8px;">
                 <h3>${team.strTeam}</h3>
-                <img src="${team.strTeamBadge}" alt="Badge of ${team.strTeam} football club" style="width:80px;">
                 <button class="view-jersey-btn" data-team="${team.strTeam}">View Jersey</button>
             `;
             jerseyContainer.appendChild(teamCard);
         });
     }
 
-    // Event delegation for team buttons
+    // Event delegation for team and back-to-leagues buttons
     jerseyContainer.addEventListener("click", async (event) => {
         if (event.target.classList.contains("view-jersey-btn")) {
             const teamName = event.target.getAttribute("data-team");
             await fetchJersey(teamName);
+        } else if (event.target.classList.contains("back-to-leagues-btn")) {
+            fetchLeagues();
         }
     });
 
@@ -141,7 +144,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // Display a grid of available jerseys for a team
+    // Display a grid of available jerseys for a team (only Home and Away)
     function displayJerseyGrid(team) {
         const jerseys = [
             {
@@ -153,11 +156,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 type: "Away Jersey",
                 img: team.strTeamJersey2 || team.strTeamBadge,
                 price: 74.99
-            },
-            {
-                type: "Third Jersey",
-                img: team.strTeamJersey3 || team.strTeamBadge,
-                price: 79.99
             }
         ];
         jerseyContainer.innerHTML = `<h2>${team.strTeam} Jerseys</h2>`;

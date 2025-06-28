@@ -28,6 +28,12 @@ main {
 }
 
 header {
+    background: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+header {
     background-color: rgba(0, 123, 255, 0.8);
     color: white;
     padding: 20px;
@@ -84,40 +90,41 @@ button:hover {
 /* Header/branding and search bar container */
 .header-bar {
     position: relative;
-    margin: 32px auto 24px auto;
-    max-width: 480px;
-    width: 90vw;
-    background: rgba(255,255,255,0.82);
+    margin: 38px auto 18px auto;
+    max-width: 700px;
+    width: 98vw;
+    background: linear-gradient(120deg, #f7d774 0%, #f7f3e9 100%); /* soft gold to off-white gradient */
     box-shadow: 0 4px 24px #0002, 0 1.5px 6px #0001;
-    border-radius: 22px;
-    padding: 24px 28px 18px 28px;
+    border-radius: 26px;
+    border: 2.5px solid #e6c14c;
+    padding: 32px 36px 22px 36px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    backdrop-filter: blur(6px);
+    backdrop-filter: blur(8px);
     z-index: 2;
 }
 
 .header-bar h1, .header-bar .branding {
     font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
-    font-size: 2.1em;
-    font-weight: 800;
-    letter-spacing: 1px;
+    font-size: 2.7em;
+    font-weight: 900;
+    letter-spacing: 1.5px;
     color: #1a2233;
-    margin: 0 0 12px 0;
+    margin: 0 0 16px 0;
     text-shadow: 0 2px 8px #fff8;
 }
 
 /* Modern search bar styling */
 .header-bar input[type="search"], .header-bar input[type="text"] {
     width: 100%;
-    max-width: 320px;
-    padding: 10px 16px;
-    border-radius: 16px;
+    max-width: 400px;
+    padding: 13px 18px;
+    border-radius: 18px;
     border: none;
     background: #f7f9fa;
     box-shadow: 0 1.5px 6px #0001;
-    font-size: 1.08em;
+    font-size: 1.15em;
     color: #222;
     margin-bottom: 0;
     outline: none;
@@ -126,16 +133,6 @@ button:hover {
 .header-bar input[type="search"]:focus, .header-bar input[type="text"]:focus {
     background: #fff;
     box-shadow: 0 2px 12px #2980b955, 0 1.5px 6px #0001;
-}
-
-@media (max-width: 600px) {
-    .header-bar {
-        padding: 16px 8vw 12px 8vw;
-        max-width: 98vw;
-    }
-    .header-bar h1, .header-bar .branding {
-        font-size: 1.3em;
-    }
 }
 
 /* Cart Styles */

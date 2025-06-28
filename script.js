@@ -1,166 +1,139 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const jerseyContainer = document.getElementById("jersey-container");
     const cartContainer = document.getElementById("cart-container");
-    const cart = []; // Cart array to store selected items
+    const cart = [];
 
-    const BASE_URL = "competitions.json";
+    // Show loading indicator
+    function showLoading(message = "Loading...") {
+        jerseyContainer.innerHTML = `<div class="loading-indicator">${message}</div>`;
+    }
 
-    async function fetchCompetitions() {
+    // Fetch football leagues from TheSportsDB
+    async function fetchLeagues() {
+        showLoading("Loading leagues...");
         try {
-            console.log("Fetching competitions from:", BASE_URL);
-            const response = await fetch(BASE_URL);
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-
+            const response = await fetch("https://www.thesportsdb.com/api/v1/json/3/all_leagues.php");
             const data = await response.json();
-            console.log("Competitions data:", data);
-            displayCompetitions(data);
+            // Filter for soccer/football leagues only
+            const footballLeagues = data.leagues.filter(l => l.strSport === "Soccer");
+            displayLeagues(footballLeagues);
         } catch (error) {
-            console.error("Error fetching competitions:", error);
+            jerseyContainer.innerHTML = "<p>Failed to load leagues. Try again later.</p>";
+            console.error("Error fetching leagues:", error);
         }
     }
 
-    function displayCompetitions(competitions) {
-        jerseyContainer.innerHTML = "";
-
-        competitions.forEach(competition => {
-            const competitionCard = document.createElement("div");
-            competitionCard.classList.add("jersey-card");
-            competitionCard.innerHTML = `
-                <h3>${competition.name}</h3>
-                <p>Area: ${competition.area.name}</p>
-                <button class="view-teams-btn" data-competition='${JSON.stringify(competition)}'>View Teams</button>
+    function displayLeagues(leagues) {
+        jerseyContainer.innerHTML = "<h2>Select a League</h2>";
+        leagues.forEach(league => {
+            const leagueCard = document.createElement("div");
+            leagueCard.classList.add("jersey-card", "league-card");
+            leagueCard.innerHTML = `
+                <h3>${league.strLeague}</h3>
+                <button class="view-teams-btn" data-league="${league.strLeague}">View Teams</button>
             `;
-            jerseyContainer.appendChild(competitionCard);
-        });
-
-        // Use event delegation for buttons
-        jerseyContainer.addEventListener("click", (event) => {
-            if (event.target.classList.contains("view-teams-btn")) {
-                const competition = JSON.parse(event.target.getAttribute("data-competition"));
-                displayTeams(competition.teams);
-            }
+            jerseyContainer.appendChild(leagueCard);
         });
     }
 
-    function displayTeams(teams) {
-        jerseyContainer.innerHTML = "";
+    // Event delegation for league buttons
+    jerseyContainer.addEventListener("click", async (event) => {
+        if (event.target.classList.contains("view-teams-btn")) {
+            const leagueName = event.target.getAttribute("data-league");
+            await fetchTeams(leagueName);
+        }
+    });
 
+    // Fetch teams in a league
+    async function fetchTeams(leagueName) {
+        showLoading("Loading teams...");
+        try {
+            const response = await fetch(`https://www.thesportsdb.com/api/v1/json/3/search_all_teams.php?l=${encodeURIComponent(leagueName)}`);
+            const data = await response.json();
+            displayTeams(data.teams, leagueName);
+        } catch (error) {
+            jerseyContainer.innerHTML = "<p>Failed to load teams. Try again later.</p>";
+            console.error("Error fetching teams:", error);
+        }
+    }
+
+    function displayTeams(teams, leagueName) {
+        jerseyContainer.innerHTML = `<h2>${leagueName} Teams</h2>`;
         teams.forEach(team => {
             const teamCard = document.createElement("div");
-            teamCard.classList.add("jersey-card");
+            teamCard.classList.add("jersey-card", "team-card");
             teamCard.innerHTML = `
-                <h3>${team.name}</h3>
-                <button class="view-jerseys-btn" data-team='${JSON.stringify(team)}'>View Jerseys</button>
+                <h3>${team.strTeam}</h3>
+                <img src="${team.strTeamBadge}" alt="${team.strTeam} badge" style="width:80px;">
+                <button class="view-jersey-btn" data-team="${team.strTeam}">View Jersey</button>
             `;
             jerseyContainer.appendChild(teamCard);
         });
-
-        // Use event delegation for buttons
-        jerseyContainer.addEventListener("click", (event) => {
-            if (event.target.classList.contains("view-jerseys-btn")) {
-                const team = JSON.parse(event.target.getAttribute("data-team"));
-                displayJerseys(team.jerseys);
-            }
-        });
     }
 
-    function displayJerseys(jerseys) {
-        jerseyContainer.innerHTML = "";
+    // Event delegation for team buttons
+    jerseyContainer.addEventListener("click", async (event) => {
+        if (event.target.classList.contains("view-jersey-btn")) {
+            const teamName = event.target.getAttribute("data-team");
+            await fetchJersey(teamName);
+        }
+    });
 
-        jerseys.forEach(jersey => {
-            const jerseyCard = document.createElement("div");
-            jerseyCard.classList.add("jersey-item");
-            jerseyCard.innerHTML = `
-                <img src="${jersey.image}" alt="${jersey.type}">
-                <h4>${jersey.type} Jersey</h4>
-                <p>Price: $${jersey.price}</p>
-                <button class="add-to-cart-btn" data-jersey='${JSON.stringify(jersey)}'>Add to Cart</button>
-            `;
-            jerseyContainer.appendChild(jerseyCard);
-        });
-
-        // Use event delegation for buttons
-        jerseyContainer.addEventListener("click", (event) => {
-            if (event.target.classList.contains("add-to-cart-btn")) {
-                const jersey = JSON.parse(event.target.getAttribute("data-jersey"));
-                addToCart(jersey);
-            }
-        });
+    // Fetch team details (jersey)
+    async function fetchJersey(teamName) {
+        showLoading("Loading jersey...");
+        try {
+            const response = await fetch(`https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=${encodeURIComponent(teamName)}`);
+            const data = await response.json();
+            displayJersey(data.teams[0]);
+        } catch (error) {
+            jerseyContainer.innerHTML = "<p>Failed to load jersey. Try again later.</p>";
+            console.error("Error fetching jersey:", error);
+        }
     }
 
-    function addToCart(jersey) {
-        cart.push(jersey);
-        alert(`${jersey.type} jersey added to cart!`);
-        displayCart();
+    function displayJersey(team) {
+        jerseyContainer.innerHTML = `
+            <h2>${team.strTeam} Jersey</h2>
+            <img src="${team.strTeamJersey || team.strTeamBadge}" alt="${team.strTeam} jersey" style="width:200px;">
+            <p>${team.strDescriptionEN ? team.strDescriptionEN.substring(0, 200) + '...' : ''}</p>
+            <button class="add-to-cart-btn" data-team="${team.strTeam}" data-img="${team.strTeamJersey || team.strTeamBadge}">Add to Cart</button>
+            <button class="back-btn">Back to Teams</button>
+        `;
     }
 
-    function displayCart() {
-        cartContainer.innerHTML = "";
+    // Event delegation for add to cart and back buttons
+    jerseyContainer.addEventListener("click", (event) => {
+        if (event.target.classList.contains("add-to-cart-btn")) {
+            const team = event.target.getAttribute("data-team");
+            const img = event.target.getAttribute("data-img");
+            cart.push({ team, img });
+            renderCart();
+            alert(`Added ${team} jersey to cart!`);
+        } else if (event.target.classList.contains("back-btn")) {
+            // Go back to teams (assume last league selected)
+            const lastLeague = document.querySelector("h2").textContent.replace(" Teams", "");
+            fetchTeams(lastLeague);
+        }
+    });
 
+    function renderCart() {
+        cartContainer.innerHTML = '<h2>Cart</h2>';
         if (cart.length === 0) {
-            cartContainer.innerHTML = "<p>Your cart is empty.</p>";
+            cartContainer.innerHTML += '<p>Your cart is empty.</p>';
             return;
         }
-
-        let totalPrice = 0;
-
-        cart.forEach((item, index) => {
-            totalPrice += item.price;
+        cart.forEach(item => {
             const cartItem = document.createElement("div");
-            cartItem.classList.add("cart-item");
+            cartItem.classList.add("jersey-item");
             cartItem.innerHTML = `
-                <p>${item.type} Jersey - $${item.price}</p>
-                <button class="remove-from-cart-btn" data-index="${index}">Remove</button>
+                <img src="${item.img}" alt="${item.team} jersey" style="width:50px;">
+                <span>${item.team} Jersey</span>
             `;
             cartContainer.appendChild(cartItem);
         });
-
-        const totalPriceElement = document.createElement("p");
-        totalPriceElement.innerHTML = `<strong>Total Price: $${totalPrice}</strong>`;
-        cartContainer.appendChild(totalPriceElement);
-
-        const checkoutButton = document.createElement("button");
-        checkoutButton.textContent = "Proceed to Checkout";
-        checkoutButton.classList.add("checkout-btn");
-        checkoutButton.addEventListener("click", displayCheckoutForm);
-        cartContainer.appendChild(checkoutButton);
-
-        // Use event delegation for buttons
-        cartContainer.addEventListener("click", (event) => {
-            if (event.target.classList.contains("remove-from-cart-btn")) {
-                const index = event.target.getAttribute("data-index");
-                cart.splice(index, 1);
-                displayCart();
-            }
-        });
     }
 
-    function displayCheckoutForm() {
-        jerseyContainer.innerHTML = `
-            <h2>Checkout</h2>
-            <form id="checkout-form">
-                <label for="name">Name:</label>
-                <input type="text" id="name" required>
-                <label for="address">Address:</label>
-                <input type="text" id="address" required>
-                <label for="email">Email:</label>
-                <input type="email" id="email" required>
-                <button type="submit">Place Order</button>
-            </form>
-        `;
-
-        const checkoutForm = document.getElementById("checkout-form");
-        checkoutForm.addEventListener("submit", (event) => {
-            event.preventDefault();
-            alert("Order placed successfully! Thank you for shopping.");
-            cart.length = 0;
-            displayCart();
-            fetchCompetitions(); // Return to main selection screen
-        });
-    }
-
-    fetchCompetitions();
+    // Initial fetch
+    fetchLeagues();
 });

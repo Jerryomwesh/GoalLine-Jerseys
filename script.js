@@ -136,16 +136,26 @@ document.addEventListener("DOMContentLoaded", async () => {
             cartContainer.innerHTML += '<p>Your cart is empty.</p>';
             return;
         }
-        cart.forEach(item => {
+        cart.forEach((item, index) => {
             const cartItem = document.createElement("div");
             cartItem.classList.add("jersey-item");
             cartItem.innerHTML = `
                 <img src="${item.img}" alt="${item.team} jersey" style="width:50px;">
                 <span>${item.team} Jersey</span>
+                <button class="remove-from-cart-btn" data-index="${index}">Remove</button>
             `;
             cartContainer.appendChild(cartItem);
         });
     }
+
+    // Event listener for removing items from cart
+    cartContainer.addEventListener("click", (event) => {
+        if (event.target.classList.contains("remove-from-cart-btn")) {
+            const index = event.target.getAttribute("data-index");
+            cart.splice(index, 1);
+            renderCart();
+        }
+    });
 
     // Search functionality
     searchInput.addEventListener("input", (event) => {

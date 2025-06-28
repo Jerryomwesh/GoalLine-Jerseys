@@ -32,6 +32,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function displayLeagues(leagues) {
         jerseyContainer.innerHTML = "<h2>Select a League</h2>";
+        if (leagues.length === 0) {
+            jerseyContainer.innerHTML += '<p class="no-results">No leagues found.</p>';
+            return;
+        }
         leagues.forEach(league => {
             const leagueCard = document.createElement("div");
             leagueCard.classList.add("jersey-card", "league-card");
@@ -69,12 +73,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function displayTeams(teams, leagueName) {
         jerseyContainer.innerHTML = `<h2>${leagueName} Teams</h2>`;
+        if (!teams || teams.length === 0) {
+            jerseyContainer.innerHTML += '<p class="no-results">No teams found.</p>';
+            return;
+        }
         teams.forEach(team => {
             const teamCard = document.createElement("div");
             teamCard.classList.add("jersey-card", "team-card");
             teamCard.innerHTML = `
                 <h3>${team.strTeam}</h3>
-                <img src="${team.strTeamBadge}" alt="${team.strTeam} badge" style="width:80px;">
+                <img src="${team.strTeamBadge}" alt="Badge of ${team.strTeam} football club" style="width:80px;">
                 <button class="view-jersey-btn" data-team="${team.strTeam}">View Jersey</button>
             `;
             jerseyContainer.appendChild(teamCard);
@@ -105,7 +113,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     function displayJersey(team) {
         jerseyContainer.innerHTML = `
             <h2>${team.strTeam} Jersey</h2>
-            <img src="${team.strTeamJersey || team.strTeamBadge}" alt="${team.strTeam} jersey" style="width:200px;">
+            <img src="${team.strTeamJersey || team.strTeamBadge}" alt="${team.strTeam} official jersey image" style="width:200px;">
             <p>${team.strDescriptionEN ? team.strDescriptionEN.substring(0, 200) + '...' : ''}</p>
             <button class="add-to-cart-btn" data-team="${team.strTeam}" data-img="${team.strTeamJersey || team.strTeamBadge}">Add to Cart</button>
             <button class="back-btn">Back to Teams</button>
@@ -146,7 +154,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const cartItem = document.createElement("div");
             cartItem.classList.add("jersey-item");
             cartItem.innerHTML = `
-                <img src="${item.img}" alt="${item.team} jersey" style="width:50px;">
+                <img src="${item.img}" alt="${item.team} jersey in cart" style="width:50px;">
                 <span>${item.team} Jersey</span>
                 <button class="remove-from-cart-btn" data-index="${index}">Remove</button>
             `;

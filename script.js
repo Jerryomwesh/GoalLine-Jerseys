@@ -105,31 +105,67 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    function displayTeams(teams, leagueName) {
-        jerseyContainer.innerHTML = `<h2>${leagueName} Teams</h2>`;
-        jerseyContainer.innerHTML += `<button class="back-to-leagues-btn">Back to Leagues</button>`;
+    function getTeamInitials(name) {
+        // Get up to 3 initials from the team name
+        return name.split(' ').map(w => w[0]).join('').substring(0, 3).toUpperCase();
+    }
+
+    function getTeamColor(name) {
+        // Simple hash to pick a color from a palette
+        const colors = [
+            '#e74c3c', '#2980b9', '#27ae60', '#f39c12', '#8e44ad', '#16a085', '#d35400', '#2c3e50', '#c0392b', '#7f8c8d'
+        ];
+        let hash = 0;
+        for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        return colors[Math.abs(hash) % colors.length];
+    }
+
+    // Display teams (no EPL heading)
+    async function displayTeams(teams, leagueName) {
+        jerseyContainer.innerHTML = '';
         if (!teams || teams.length === 0) {
             jerseyContainer.innerHTML += '<p class="no-results">No teams found.</p>';
             return;
         }
-        teams.forEach(team => {
+        // Fetch full details for each team to get the badge
+        const teamDetails = await Promise.all(teams.map(async team => {
+            try {
+                const data = await safeFetchJson(corsProxy(`https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=${encodeURIComponent(team.strTeam)}`));
+                return data.teams && data.teams[0] ? data.teams[0] : team;
+            } catch {
+                return team;
+            }
+        }));
+        teamDetails.forEach(team => {
             const teamCard = document.createElement("div");
             teamCard.classList.add("jersey-card", "team-card");
-            teamCard.innerHTML = `
-                <h3>${team.strTeam}</h3>
-                <button class="view-jersey-btn" data-team="${team.strTeam}">View Jersey</button>
-            `;
+            let badge = team.strTeamBadge;
+            if (!badge || typeof badge !== 'string' || !badge.startsWith('http')) {
+                // Show initials in a colored circle if no badge
+                const initials = getTeamInitials(team.strTeam);
+                const color = getTeamColor(team.strTeam);
+                badge = `<div style="width:60px;height:60px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;font-size:1.5em;font-weight:bold;color:#fff;margin:0 auto 8px auto;">${initials}</div>`;
+                teamCard.innerHTML = `
+                    ${badge}
+                    <h3>${team.strTeam}</h3>
+                    <button class="view-jersey-btn" data-team="${team.strTeam}">View Jersey</button>
+                `;
+            } else {
+                teamCard.innerHTML = `
+                    <img src="${badge}" alt="${team.strTeam} logo" style="width:60px; height:60px; object-fit:contain; margin-bottom:8px;">
+                    <h3>${team.strTeam}</h3>
+                    <button class="view-jersey-btn" data-team="${team.strTeam}">View Jersey</button>
+                `;
+            }
             jerseyContainer.appendChild(teamCard);
         });
     }
 
-    // Event delegation for team and back-to-leagues buttons
+    // Event delegation for team buttons
     jerseyContainer.addEventListener("click", async (event) => {
         if (event.target.classList.contains("view-jersey-btn")) {
             const teamName = event.target.getAttribute("data-team");
             await fetchJersey(teamName);
-        } else if (event.target.classList.contains("back-to-leagues-btn")) {
-            fetchLeagues();
         }
     });
 
@@ -145,30 +181,63 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    // Static mapping for jersey images (start with Arsenal as a test)
+    const jerseyImages = {
+        "Arsenal": {
+            "Home Jersey": "https://i1.adis.ws/i/ArsenalDirect/uwclch25wa_f?&$plpImages$",
+            "Away Jersey": "https://cdn.media.amplience.net/i/ArsenalDirect/800x800_Away_product?w=960&fmt=webp&qlt=80"
+        }
+        // Add more teams here as needed
+    };
+
     // Display a grid of available jerseys for a team (only Home and Away)
     function displayJerseyGrid(team) {
-        const jerseys = [
-            {
-                type: "Home Jersey",
-                img: team.strTeamJersey || team.strTeamBadge,
-                price: 69.99
-            },
-            {
-                type: "Away Jersey",
-                img: team.strTeamJersey2 || team.strTeamBadge,
-                price: 74.99
-            }
-        ];
+        // Use static images for Arsenal, fallback to API for others
+        let jerseys;
+        if (jerseyImages[team.strTeam]) {
+            jerseys = [
+                {
+                    type: "Home Jersey",
+                    img: jerseyImages[team.strTeam]["Home Jersey"] || '',
+                    price: 69.99
+                },
+                {
+                    type: "Away Jersey",
+                    img: jerseyImages[team.strTeam]["Away Jersey"] || '',
+                    price: 74.99
+                }
+            ];
+        } else {
+            jerseys = [
+                {
+                    type: "Home Jersey",
+                    img: team.strTeamJersey || '',
+                    price: 69.99
+                },
+                {
+                    type: "Away Jersey",
+                    img: team.strTeamJersey2 || '',
+                    price: 74.99
+                }
+            ];
+        }
         jerseyContainer.innerHTML = `<h2>${team.strTeam} Jerseys</h2>`;
         jerseyContainer.innerHTML += `<div class="jersey-grid">${jerseys.map(j => `
             <div class="jersey-card jersey-type-card">
                 <h3>${j.type}</h3>
-                <img src="${j.img}" alt="${team.strTeam} ${j.type}" style="width:140px; height:140px; object-fit:contain;">
+                ${j.img ? `<img src="${j.img}" alt="${team.strTeam} ${j.type}" style="width:140px; height:140px; object-fit:contain; background:#f7f7f7; border-radius:12px; box-shadow:0 2px 8px #0001; margin-bottom:10px;">` : `<div style='width:140px;height:140px;display:flex;align-items:center;justify-content:center;background:#eee;border-radius:12px;color:#bbb;font-size:2em;margin-bottom:10px;'>No Image</div>`}
                 <p class="jersey-price">$${j.price.toFixed(2)}</p>
                 <button class="add-to-cart-btn" data-team="${team.strTeam}" data-type="${j.type}" data-img="${j.img}" data-price="${j.price}">Add to Cart</button>
             </div>
         `).join('')}</div>`;
-        jerseyContainer.innerHTML += `<button class="back-btn">Back to Teams</button>`;
+        // Improved, smaller back button styled like team buttons
+        jerseyContainer.innerHTML += `
+            <div style="text-align:center;margin-top:18px;">
+                <button class="back-btn" style="padding:7px 18px;font-size:1em;border-radius:8px;background:#2980b9;color:#fff;border:none;box-shadow:0 2px 8px #0001;cursor:pointer;transition:background 0.2s;display:inline-flex;align-items:center;gap:8px;">
+                    <span style="font-size:1.1em;">←</span> Back to Teams
+                </button>
+            </div>
+        `;
     }
 
     // Event delegation for add to cart and back buttons
@@ -188,12 +257,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             renderCart();
             alert(`Added ${team} ${type} to cart!`);
         } else if (event.target.classList.contains("back-btn")) {
-            // Go back to teams (assume last league selected)
-            if (lastLeagueName) {
-                fetchTeams(lastLeagueName);
-            } else {
-                fetchLeagues();
-            }
+            // Always go back to EPL teams list
+            fetchEPLTeams();
         }
     });
 
@@ -256,58 +321,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Search functionality
     searchInput.addEventListener("input", (event) => {
         const query = event.target.value.toLowerCase();
-        if (currentView === "leagues") {
-            const filteredLeagues = allLeagues.filter(l => l.strLeague.toLowerCase().includes(query));
-            displayLeagues(filteredLeagues);
-        } else if (currentView === "teams") {
-            const filteredTeams = currentTeams.filter(t => t.strTeam.toLowerCase().includes(query));
-            displayTeams(filteredTeams, lastLeagueName);
-        }
+        const filteredTeams = currentTeams.filter(t => t.strTeam.toLowerCase().includes(query));
+        displayTeams(filteredTeams, lastLeagueName);
     });
 
-    // Static EPL teams data (name and logo)
-    const EPL_TEAMS = [
-        { name: "Arsenal", logo: "https://www.thesportsdb.com/images/media/team/badge/vrtrtp1448813175.png" },
-        { name: "Aston Villa", logo: "https://www.thesportsdb.com/images/media/team/badge/ppwpwq1420639113.png" },
-        { name: "Bournemouth", logo: "https://www.thesportsdb.com/images/media/team/badge/wwxrtq1420639183.png" },
-        { name: "Brentford", logo: "https://www.thesportsdb.com/images/media/team/badge/1c8b7d1643123217.png" },
-        { name: "Brighton", logo: "https://www.thesportsdb.com/images/media/team/badge/uwrpwr1420639180.png" },
-        { name: "Burnley", logo: "https://www.thesportsdb.com/images/media/team/badge/1c8b7d1643123217.png" },
-        { name: "Chelsea", logo: "https://www.thesportsdb.com/images/media/team/badge/tu8wtu1511465461.png" },
-        { name: "Crystal Palace", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
-        { name: "Everton", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
-        { name: "Fulham", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
-        { name: "Liverpool", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
-        { name: "Luton", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
-        { name: "Man City", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
-        { name: "Man United", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
-        { name: "Newcastle", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
-        { name: "Nottingham Forest", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
-        { name: "Sheffield United", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
-        { name: "Tottenham", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
-        { name: "West Ham", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
-        { name: "Wolves", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" }
-    ];
-
-    // Show EPL teams on homepage
-    function showEPLTeams() {
-        currentView = "teams";
-        lastLeagueName = "English Premier League";
-        jerseyContainer.innerHTML = `<h2>English Premier League Teams</h2>`;
-        EPL_TEAMS.forEach(team => {
-            const teamCard = document.createElement("div");
-            teamCard.classList.add("jersey-card", "team-card");
-            teamCard.innerHTML = `
-                <img src="${team.logo}" alt="${team.name} logo" style="width:80px; height:80px; object-fit:contain; margin-bottom:8px;">
-                <h3>${team.name}</h3>
-                <button class="view-jersey-btn" data-team="${team.name}">View Jersey</button>
-            `;
-            jerseyContainer.appendChild(teamCard);
-        });
+    // Fetch only English Premier League teams from TheSportsDB
+    async function fetchEPLTeams() {
+        showLoading("Loading Premier League teams...");
+        try {
+            // Fetch EPL teams directly
+            const data = await safeFetchJson(corsProxy("https://www.thesportsdb.com/api/v1/json/3/search_all_teams.php?l=English%20Premier%20League"));
+            currentTeams = data.teams || [];
+            currentView = "teams";
+            displayTeams(currentTeams, "English Premier League");
+        } catch (error) {
+            jerseyContainer.innerHTML = `<p>Failed to load EPL teams. ${error.message || 'Try again later.'}</p>`;
+            console.error("Error fetching EPL teams:", error);
+        }
     }
 
-    // Initial fetch
-    // fetchLeagues();
-    showEPLTeams();
+    // Initial fetch: show only EPL teams
+    fetchEPLTeams();
     renderCart(); // Ensure cart is rendered and styled on page load
 });

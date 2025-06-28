@@ -117,6 +117,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (event.target.classList.contains("add-to-cart-btn")) {
             const team = event.target.getAttribute("data-team");
             const img = event.target.getAttribute("data-img");
+            // Prevent duplicate jerseys in cart
+            const alreadyInCart = cart.some(item => item.team === team);
+            if (alreadyInCart) {
+                alert(`${team} jersey is already in your cart!`);
+                return;
+            }
             cart.push({ team, img });
             renderCart();
             alert(`Added ${team} jersey to cart!`);

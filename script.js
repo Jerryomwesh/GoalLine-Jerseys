@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     function renderCart() {
-        cartContainer.innerHTML = '<h2>Cart</h2>';
+        cartContainer.innerHTML = `<h2>Cart <span class="cart-count-badge">${cart.length}</span></h2>`;
         if (cart.length === 0) {
             cartContainer.innerHTML += '<p>Your cart is empty.</p>';
             return;

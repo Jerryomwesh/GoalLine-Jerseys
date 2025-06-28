@@ -1,7 +1,13 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const jerseyContainer = document.getElementById("jersey-container");
     const cartContainer = document.getElementById("cart-container");
+    const searchInput = document.getElementById("search");
     const cart = [];
+
+    let allLeagues = [];
+    let currentTeams = [];
+    let currentView = "leagues"; // or "teams"
+    let lastLeagueName = "";
 
     // Show loading indicator
     function showLoading(message = "Loading...") {
@@ -15,8 +21,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             const response = await fetch("https://www.thesportsdb.com/api/v1/json/3/all_leagues.php");
             const data = await response.json();
             // Filter for soccer/football leagues only
-            const footballLeagues = data.leagues.filter(l => l.strSport === "Soccer");
-            displayLeagues(footballLeagues);
+            allLeagues = data.leagues.filter(l => l.strSport === "Soccer");
+            currentView = "leagues";
+            displayLeagues(allLeagues);
         } catch (error) {
             jerseyContainer.innerHTML = "<p>Failed to load leagues. Try again later.</p>";
             console.error("Error fetching leagues:", error);
@@ -40,6 +47,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     jerseyContainer.addEventListener("click", async (event) => {
         if (event.target.classList.contains("view-teams-btn")) {
             const leagueName = event.target.getAttribute("data-league");
+            lastLeagueName = leagueName;
             await fetchTeams(leagueName);
         }
     });
@@ -50,7 +58,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         try {
             const response = await fetch(`https://www.thesportsdb.com/api/v1/json/3/search_all_teams.php?l=${encodeURIComponent(leagueName)}`);
             const data = await response.json();
-            displayTeams(data.teams, leagueName);
+            currentTeams = data.teams || [];
+            currentView = "teams";
+            displayTeams(currentTeams, leagueName);
         } catch (error) {
             jerseyContainer.innerHTML = "<p>Failed to load teams. Try again later.</p>";
             console.error("Error fetching teams:", error);
@@ -112,8 +122,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             alert(`Added ${team} jersey to cart!`);
         } else if (event.target.classList.contains("back-btn")) {
             // Go back to teams (assume last league selected)
-            const lastLeague = document.querySelector("h2").textContent.replace(" Teams", "");
-            fetchTeams(lastLeague);
+            if (lastLeagueName) {
+                fetchTeams(lastLeagueName);
+            } else {
+                fetchLeagues();
+            }
         }
     });
 
@@ -133,6 +146,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             cartContainer.appendChild(cartItem);
         });
     }
+
+    // Search functionality
+    searchInput.addEventListener("input", (event) => {
+        const query = event.target.value.toLowerCase();
+        if (currentView === "leagues") {
+            const filteredLeagues = allLeagues.filter(l => l.strLeague.toLowerCase().includes(query));
+            displayLeagues(filteredLeagues);
+        } else if (currentView === "teams") {
+            const filteredTeams = currentTeams.filter(t => t.strTeam.toLowerCase().includes(query));
+            displayTeams(filteredTeams, lastLeagueName);
+        }
+    });
 
     // Initial fetch
     fetchLeagues();

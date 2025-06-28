@@ -19,34 +19,39 @@ document.addEventListener("DOMContentLoaded", async () => {
         return `https://corsproxy.io/?${encodeURIComponent(url)}`;
     }
 
+    // Helper to safely fetch JSON and handle non-JSON responses
+    async function safeFetchJson(url) {
+        const response = await fetch(url);
+        const text = await response.text();
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            throw new Error('API returned an invalid response. You may be rate-limited or the resource is missing.');
+        }
+    }
+
     // Fetch football leagues from TheSportsDB
     async function fetchLeagues() {
         showLoading("Loading leagues...");
         try {
-            const response = await fetch(corsProxy("https://www.thesportsdb.com/api/v1/json/3/all_leagues.php"));
-            const data = await response.json();
-            // Filter for soccer/football leagues only
+            const data = await safeFetchJson(corsProxy("https://www.thesportsdb.com/api/v1/json/3/all_leagues.php"));
             allLeagues = data.leagues.filter(l => l.strSport === "Soccer");
             currentView = "leagues";
             await displayLeagues(allLeagues);
         } catch (error) {
-            jerseyContainer.innerHTML = "<p>Failed to load leagues. Try again later.</p>";
+            jerseyContainer.innerHTML = `<p>Failed to load leagues. ${error.message || 'Try again later.'}</p>`;
             console.error("Error fetching leagues:", error);
         }
     }
 
     async function displayLeagues(leagues) {
         jerseyContainer.innerHTML = "<h2>Select a League</h2>";
-        // Filter out leagues without a valid idLeague or with missing name
         const validLeagues = leagues.filter(l => l.idLeague && l.strLeague);
-        // Find if 'No League' exists
         const noLeague = leagues.find(l => l.strLeague && l.strLeague.trim().toLowerCase() === "no league");
-        // Fetch league details for logos
         const leagueCards = await Promise.all(validLeagues.map(async (league) => {
             let logoUrl = '';
             try {
-                const res = await fetch(corsProxy(`https://www.thesportsdb.com/api/v1/json/3/lookupleague.php?id=${league.idLeague}`));
-                const data = await res.json();
+                const data = await safeFetchJson(corsProxy(`https://www.thesportsdb.com/api/v1/json/3/lookupleague.php?id=${league.idLeague}`));
                 if (data.leagues && data.leagues[0] && data.leagues[0].strBadge) {
                     logoUrl = data.leagues[0].strBadge;
                 }
@@ -61,7 +66,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             `;
         }));
         const filteredCards = leagueCards.filter(Boolean);
-        // Add creative placeholder for 'No League' at the top if it exists
         if (noLeague) {
             filteredCards.unshift(`
                 <div class="jersey-card league-card no-league-card">
@@ -91,13 +95,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function fetchTeams(leagueName) {
         showLoading("Loading teams...");
         try {
-            const response = await fetch(corsProxy(`https://www.thesportsdb.com/api/v1/json/3/search_all_teams.php?l=${encodeURIComponent(leagueName)}`));
-            const data = await response.json();
+            const data = await safeFetchJson(corsProxy(`https://www.thesportsdb.com/api/v1/json/3/search_all_teams.php?l=${encodeURIComponent(leagueName)}`));
             currentTeams = data.teams || [];
             currentView = "teams";
             displayTeams(currentTeams, leagueName);
         } catch (error) {
-            jerseyContainer.innerHTML = "<p>Failed to load teams. Try again later.</p>";
+            jerseyContainer.innerHTML = `<p>Failed to load teams. ${error.message || 'Try again later.'}</p>`;
             console.error("Error fetching teams:", error);
         }
     }
@@ -113,7 +116,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             const teamCard = document.createElement("div");
             teamCard.classList.add("jersey-card", "team-card");
             teamCard.innerHTML = `
-                <img src="${team.strTeamBadge || 'https://via.placeholder.com/80?text=No+Logo'}" alt="Badge of ${team.strTeam} football club" style="width:80px; height:80px; object-fit:contain; margin-bottom:8px;">
                 <h3>${team.strTeam}</h3>
                 <button class="view-jersey-btn" data-team="${team.strTeam}">View Jersey</button>
             `;
@@ -135,11 +137,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function fetchJersey(teamName) {
         showLoading("Loading jerseys...");
         try {
-            const response = await fetch(corsProxy(`https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=${encodeURIComponent(teamName)}`));
-            const data = await response.json();
+            const data = await safeFetchJson(corsProxy(`https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=${encodeURIComponent(teamName)}`));
             displayJerseyGrid(data.teams[0]);
         } catch (error) {
-            jerseyContainer.innerHTML = "<p>Failed to load jerseys. Try again later.</p>";
+            jerseyContainer.innerHTML = `<p>Failed to load jerseys. ${error.message || 'Try again later.'}</p>`;
             console.error("Error fetching jersey grid:", error);
         }
     }
@@ -264,7 +265,49 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
+    // Static EPL teams data (name and logo)
+    const EPL_TEAMS = [
+        { name: "Arsenal", logo: "https://www.thesportsdb.com/images/media/team/badge/vrtrtp1448813175.png" },
+        { name: "Aston Villa", logo: "https://www.thesportsdb.com/images/media/team/badge/ppwpwq1420639113.png" },
+        { name: "Bournemouth", logo: "https://www.thesportsdb.com/images/media/team/badge/wwxrtq1420639183.png" },
+        { name: "Brentford", logo: "https://www.thesportsdb.com/images/media/team/badge/1c8b7d1643123217.png" },
+        { name: "Brighton", logo: "https://www.thesportsdb.com/images/media/team/badge/uwrpwr1420639180.png" },
+        { name: "Burnley", logo: "https://www.thesportsdb.com/images/media/team/badge/1c8b7d1643123217.png" },
+        { name: "Chelsea", logo: "https://www.thesportsdb.com/images/media/team/badge/tu8wtu1511465461.png" },
+        { name: "Crystal Palace", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
+        { name: "Everton", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
+        { name: "Fulham", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
+        { name: "Liverpool", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
+        { name: "Luton", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
+        { name: "Man City", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
+        { name: "Man United", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
+        { name: "Newcastle", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
+        { name: "Nottingham Forest", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
+        { name: "Sheffield United", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
+        { name: "Tottenham", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
+        { name: "West Ham", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" },
+        { name: "Wolves", logo: "https://www.thesportsdb.com/images/media/team/badge/ppvwpw1420639113.png" }
+    ];
+
+    // Show EPL teams on homepage
+    function showEPLTeams() {
+        currentView = "teams";
+        lastLeagueName = "English Premier League";
+        jerseyContainer.innerHTML = `<h2>English Premier League Teams</h2>`;
+        EPL_TEAMS.forEach(team => {
+            const teamCard = document.createElement("div");
+            teamCard.classList.add("jersey-card", "team-card");
+            teamCard.innerHTML = `
+                <img src="${team.logo}" alt="${team.name} logo" style="width:80px; height:80px; object-fit:contain; margin-bottom:8px;">
+                <h3>${team.name}</h3>
+                <button class="view-jersey-btn" data-team="${team.name}">View Jersey</button>
+            `;
+            jerseyContainer.appendChild(teamCard);
+        });
+    }
+
     // Initial fetch
-    fetchLeagues();
+    // fetchLeagues();
+    showEPLTeams();
     renderCart(); // Ensure cart is rendered and styled on page load
 });

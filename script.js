@@ -200,6 +200,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Update cart rendering to show jersey type and price
     function renderCart() {
+        // Add or remove 'empty' class based on cart state
+        if (cart.length === 0) {
+            cartContainer.classList.add('empty');
+        } else {
+            cartContainer.classList.remove('empty');
+        }
         cartContainer.innerHTML = `<h2>Cart <span class="cart-count-badge">${cart.length}</span></h2>`;
         if (cart.length === 0) {
             cartContainer.innerHTML += `
@@ -262,4 +268,5 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Initial fetch
     fetchLeagues();
+    renderCart(); // Ensure cart is rendered and styled on page load
 });

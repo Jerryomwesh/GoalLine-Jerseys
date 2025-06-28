@@ -5,15 +5,22 @@ html, body {
 body {
     font-family: Arial, sans-serif;
     text-align: center;
-    background-image: url('background.jpg'); /* Add a background image */
+    background: url('https://image-cdn.hypb.st/http%3A%2F%2Fhypebeast.com%2Fimage%2F2016%2F08%2Ffootball-jerseys-from-street-designers-3a.jpg?w=1260&cbr=1&q=90&fit=max') no-repeat center center fixed;
     background-size: cover;
-    background-position: center;
     color: white;
     margin: 0;
     padding: 0;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(30, 40, 60, 0.55); /* dark overlay, adjust opacity as needed */
+    z-index: -1;
 }
 
 main {
@@ -72,6 +79,63 @@ button {
 
 button:hover {
     background-color: #0056b3;
+}
+
+/* Header/branding and search bar container */
+.header-bar {
+    position: relative;
+    margin: 32px auto 24px auto;
+    max-width: 480px;
+    width: 90vw;
+    background: rgba(255,255,255,0.82);
+    box-shadow: 0 4px 24px #0002, 0 1.5px 6px #0001;
+    border-radius: 22px;
+    padding: 24px 28px 18px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    backdrop-filter: blur(6px);
+    z-index: 2;
+}
+
+.header-bar h1, .header-bar .branding {
+    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+    font-size: 2.1em;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #1a2233;
+    margin: 0 0 12px 0;
+    text-shadow: 0 2px 8px #fff8;
+}
+
+/* Modern search bar styling */
+.header-bar input[type="search"], .header-bar input[type="text"] {
+    width: 100%;
+    max-width: 320px;
+    padding: 10px 16px;
+    border-radius: 16px;
+    border: none;
+    background: #f7f9fa;
+    box-shadow: 0 1.5px 6px #0001;
+    font-size: 1.08em;
+    color: #222;
+    margin-bottom: 0;
+    outline: none;
+    transition: box-shadow 0.2s, background 0.2s;
+}
+.header-bar input[type="search"]:focus, .header-bar input[type="text"]:focus {
+    background: #fff;
+    box-shadow: 0 2px 12px #2980b955, 0 1.5px 6px #0001;
+}
+
+@media (max-width: 600px) {
+    .header-bar {
+        padding: 16px 8vw 12px 8vw;
+        max-width: 98vw;
+    }
+    .header-bar h1, .header-bar .branding {
+        font-size: 1.3em;
+    }
 }
 
 /* Cart Styles */

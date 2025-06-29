@@ -1,4 +1,4 @@
-/* General Styles */
+/* Main styles for GoalLine Jerseys */
 html, body {
     height: 100%;
 }
@@ -19,7 +19,7 @@ body::before {
     content: '';
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(30, 40, 60, 0.55); /* dark overlay, adjust opacity as needed */
+    background: rgba(30, 40, 60, 0.55); /* dark overlay for readability */
     z-index: -1;
 }
 
@@ -87,13 +87,13 @@ button:hover {
     background-color: #0056b3;
 }
 
-/* Header/branding and search bar container */
+/* Header bar and search */
 .header-bar {
     position: relative;
     margin: 38px auto 18px auto;
     max-width: 700px;
     width: 98vw;
-    background: linear-gradient(90deg, #007cf0 0%, #00dfd8 100%); /* vibrant blue to cyan gradient */
+    background: linear-gradient(90deg, #007cf0 0%, #00dfd8 100%);
     box-shadow: 0 4px 24px #0002, 0 1.5px 6px #0001;
     border-radius: 26px;
     padding: 32px 36px 22px 36px;
@@ -114,7 +114,6 @@ button:hover {
     text-shadow: 0 2px 8px #fff8;
 }
 
-/* Modern search bar styling */
 .header-bar input[type="search"], .header-bar input[type="text"] {
     width: 100%;
     max-width: 400px;
@@ -129,12 +128,13 @@ button:hover {
     outline: none;
     transition: box-shadow 0.2s, background 0.2s;
 }
+
 .header-bar input[type="search"]:focus, .header-bar input[type="text"]:focus {
     background: #fff;
     box-shadow: 0 2px 12px #2980b955, 0 1.5px 6px #0001;
 }
 
-/* Cart Styles */
+/* Cart styles */
 #cart-container {
     background-color: rgba(255, 255, 255, 0.9);
     padding: 20px;
@@ -182,7 +182,6 @@ button:hover {
     background-color: #218838;
 }
 
-/* Cart Count Badge */
 .cart-count-badge {
     background: #007bff;
     color: #fff;
@@ -193,7 +192,6 @@ button:hover {
     vertical-align: middle;
 }
 
-/* No Results Message */
 .no-results {
     color: #ffeb3b;
     background: rgba(0,0,0,0.7);
@@ -204,7 +202,6 @@ button:hover {
     font-weight: bold;
 }
 
-/* Checkout Form */
 form {
     display: flex;
     flex-direction: column;
@@ -223,7 +220,6 @@ form input {
     border-radius: 5px;
 }
 
-/* Footer Styles */
 #site-footer {
     background: #1a2233;
     color: #fff;
@@ -266,18 +262,15 @@ form input {
     }
 }
 
-/* Empty Cart Styles */
 .cart-empty {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 32px 0 24px 0;
-    background: rgba(240, 240, 255, 0.7);
+    background: none;
     border-radius: 8px;
     margin: 18px 0 0 0;
-    margin-top: 0;
-    background: none;
     box-shadow: none;
     padding: 24px 0 12px 0;
 }
@@ -313,7 +306,6 @@ form input {
     opacity: 0.97;
 }
 
-/* Jersey type card hover effect */
 .jersey-type-card {
     transition: transform 0.35s cubic-bezier(.22, .61, .36, 1), box-shadow 0.35s cubic-bezier(.22, .61, .36, 1), background 0.35s, border 0.35s;
     cursor: pointer;

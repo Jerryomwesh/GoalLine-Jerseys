@@ -181,32 +181,59 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    let jerseyImages = {};
+    // Helper to normalize team names for jersey image lookup
+    function normalizeTeamName(name) {
+        return name.trim().toLowerCase().replace(/\s+/g, '');
+    }
 
-    // Load jerseyImages.json before anything else
-    fetch('jerseyImages.json')
-        .then(response => response.json())
+    let jerseyImages = {};
+    let normalizedJerseyImages = {};
+    let jerseyImagesLoaded = false;
+    let jerseyImagesLoadPromise = fetch('jerseyImages.json')
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch jerseyImages.json');
+            return response.json();
+        })
         .then(data => {
             jerseyImages = data;
+            Object.keys(jerseyImages).forEach(team => {
+                normalizedJerseyImages[normalizeTeamName(team)] = jerseyImages[team];
+            });
+            jerseyImagesLoaded = true;
+            console.log('jerseyImages.json loaded:', normalizedJerseyImages);
+        })
+        .catch(err => {
+            console.error('Error loading jerseyImages.json:', err);
+            jerseyImagesLoaded = false;
         });
 
     // Display a grid of available jerseys for a team (only Home and Away)
-    function displayJerseyGrid(team) {
-        // Use static images from jerseyImages.json, fallback to API for others
+    async function displayJerseyGrid(team) {
+        // Wait for jerseyImages.json to load
+        if (!jerseyImagesLoaded) {
+            try {
+                await jerseyImagesLoadPromise;
+            } catch (e) {
+                console.error('jerseyImages.json failed to load, fallback to API jerseys.');
+            }
+        }
+        // Use normalized team name for lookup
+        const normName = normalizeTeamName(team.strTeam);
         let jerseys;
-        if (jerseyImages[team.strTeam]) {
+        if (normalizedJerseyImages[normName]) {
             jerseys = [
                 {
                     type: "Home Jersey",
-                    img: jerseyImages[team.strTeam]["Home Jersey"] || '',
+                    img: normalizedJerseyImages[normName]["Home Jersey"] || '',
                     price: 69.99
                 },
                 {
                     type: "Away Jersey",
-                    img: jerseyImages[team.strTeam]["Away Jersey"] || '',
+                    img: normalizedJerseyImages[normName]["Away Jersey"] || '',
                     price: 74.99
                 }
             ];
+            console.log(`Jersey images for ${team.strTeam}:`, jerseys);
         } else {
             jerseys = [
                 {
@@ -220,6 +247,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     price: 74.99
                 }
             ];
+            console.log(`Fallback API jerseys for ${team.strTeam}:`, jerseys);
         }
         jerseyContainer.innerHTML = `<h2>${team.strTeam} Jerseys</h2>`;
         jerseyContainer.innerHTML += `<div class="jersey-grid">${jerseys.map(j => `

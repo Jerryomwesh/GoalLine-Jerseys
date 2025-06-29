@@ -1,82 +1,83 @@
 {
   "Arsenal": {
-    "Home Jersey": "https://cdn.footballkitarchive.com/2025/03/19/LTggRqjVClfGaub-small.jpg",
-    "Away Jersey": "https://cdn.footballkitarchive.com/2025/03/19/ditEbfGQSYbbPCG-small.jpg"
+    "Home Jersey": "Jersey_Images/Arsenalhome-small.jpg",
+    "Away Jersey": "Jersey_Images/Arsenalaway-small.jpg"
   },
   "Aston Villa": {
-    "Home Jersey": "https://cdn.footballkitarchive.com/2024/07/23/jSVYCyjOaXHXUtP-small.jpg",
-    "Away Jersey": "https://cdn.footballkitarchive.com/2025/05/22/QhMDi0pRSkHS9Rx-small.jpg"
+    "Home Jersey": "Jersey_Images/Astonvillahome-small.jpg",
+    "Away Jersey": "Jersey_Images/Astonvilla-away.jpg"
   },
-  "Bournmouth": {
-    "Home Jersey": "https://cdn.footballkitarchive.com/2024/08/10/qnJk2JXMBFNF4Ax-small.jpg",
-    "Away Jersey": "https://cdn.footballkitarchive.com/2024/08/10/xbGI5BgXY7qgWL8-small.jpg"
+  "Bournemouth": {
+    "Home Jersey": "Jersey_Images/Bournemouthhome-small.jpg",
+    "Away Jersey": "Jersey_Images/Bournemouthaway-small.jpg"
   },
   "Brentford": {
-    "Home Jersey": "https://cdn.footballkitarchive.com/2025/06/29/ukm3o7BwbtZRc6J-small.jpg",
-    "Away Jersey": ""
+    "Home Jersey": "Jersey_Images/Brentfordhome-small.jpg",
+    "Away Jersey": "Jersey_Images/Brentfordaway-small.jpg"
   },
   "Brighton": {
-    "Home Jersey": "https://cdn.footballkitarchive.com/2025/02/19/Qxyh6JmiAAHRsV9-small.jpg",
-    "Away Jersey": "https://cdn.footballkitarchive.com/2024/07/15/YxifPQK27Ec9ET3-small.jpg"
+    "Home Jersey": "Jersey_Images/Brightonhome-small.jpg",
+    "Away Jersey": "Jersey_Images/Brightonaway-small.jpg"
   },
-  "Burnely": {
-    "Home Jersey": "https://cdn.footballkitarchive.com/2024/07/21/mha5ipDLJTKgvwx-small.jpg",
-    "Away Jersey": "https://cdn.footballkitarchive.com/2024/07/25/aJ3H2dRhYdAKRyV-small.jpg"
+  "Burnley": {
+    "Home Jersey": "Jersey_Images/Burnelyhome-small.jpg",
+    "Away Jersey": "Jersey_Images/Burnelyaway-small.jpg"
   },
-  "chelsea": {
-    "Home Jersey": "https://cdn.footballkitarchive.com/2025/05/28/DTMoir3fQInQ2PI-small.jpg",
-    "Away Jersey": "https://cdn.footballkitarchive.com/2025/06/12/Zl5eeZHczYi19hW-small.jpg"
+  "Chelsea": {
+    "Home Jersey": "Jersey_Images/Chelseahome-small.jpg",
+    "Away Jersey": "Jersey_Images/Chelseaaway-small.jpg"
   },
-  "Crystal": {
-    "Home Jersey": "https://cdn.footballkitarchive.com/2023/05/27/Z6zFC13w1k0eAPk-small.jpg",
-    "Away Jersey": "https://cdn.footballkitarchive.com/2023/07/11/KATn4svpQWJn2Rm-small.jpg"
+  "Crystal Palace": {
+    "Home Jersey": "Jersey_Images/Crystal Palacehome-small.jpg",
+    "Away Jersey": "Jersey_Images/Crystal Palaceaway-small.jpg"
   },
   "Everton": {
-    "Home Jersey": "https://cdn.footballkitarchive.com/2025/06/26/NHEJvpsYXD0iSm3-small.jpg",
-    "Away Jersey": "https://cdn.footballkitarchive.com/2024/07/30/jM2COa6SnBI1Cxl-small.jpg"
+    "Home Jersey": "Jersey_Images/Evertonhome-small.jpg",
+    "Away Jersey": "Jersey_Images/Evertonaway-small.jpg"
   },
-  "fulham": {
-    "Home Jersey": "https://cdn.footballkitarchive.com/2024/08/01/EGCFSrDPKdl0Hep-small.jpg",
-    "Away Jersey": "https://cdn.footballkitarchive.com/2024/09/16/HUNkpKGoQIzCZxZ-small.jpg"
+  "Fulham": {
+    "Home Jersey": "Jersey_Images/Fulhamhome-small.jpg",
+    "Away Jersey": "Jersey_Images/Fulhamaway-small.jpg"
   },
-  "leeds": {
-    "Home Jersey": "https://cdn.footballkitarchive.com/2024/07/06/UPwQK6NLONcPtmW-small.jpg",
-    "Away Jersey": "https://cdn.footballkitarchive.com/2024/07/24/GroZnyTOPPEmNz5-small.jpg"
+  "Leeds United": {
+    "Home Jersey": "Jersey_Images/Leeds Unitedhome-small.jpg",
+    "Away Jersey": "Jersey_Images/Leeds Unitedaway-small.jpg"
   },
   "Liverpool": {
-    "Home Jersey": "https://cdn.footballkitarchive.com/2024/05/17/lWljBTauQpZczG4-small.jpg",
-    "Away Jersey": "https://cdn.footballkitarchive.com/2024/08/02/HmOGDfHNKWwqZjt-small.jpg"
+    "Home Jersey": "Jersey_Images/Liverpoolhome-small.jpg",
+    "Away Jersey": "Jersey_Images/Liverpoolaway-small.jpg"
   },
-  "Man City": {
-    "Home Jersey": "https://cdn.footballkitarchive.com/2024/07/10/DUiBhtuyWBljwIq-small.jpg",
-    "Away Jersey": "https://cdn.footballkitarchive.com/2024/07/26/5f0acvpMmFZOPqN-small.jpg"
+  "Manchester City": {
+    "Home Jersey": "Jersey_Images/Manchester Cityhome-small.jpg",
+    "Away Jersey": "Jersey_Images/Manchester Cityaway-small.jpg"
   },
-  "Man U": {
-    "Home Jersey": "https://cdn.footballkitarchive.com/2024/07/01/wUOw1MLFGu7rjaJ-small.jpg",
-    "Away Jersey": "https://cdn.footballkitarchive.com/2024/07/25/b4nF3YsZcetpGhe-small.jpg"
+  "Manchester United": {
+    "Home Jersey": "Jersey_Images/Manchester Unitedhome-small.jpg",
+    "Away Jersey": "Jersey_Images/Manchester Unitedaway-small.jpg"
   },
-  "Newcastle": {
-    "Home Jersey": "https://cdn.footballkitarchive.com/2024/06/07/2N5ypE1OHxoWbWH-small.jpg",
-    "Away Jersey": "https://cdn.footballkitarchive.com/2024/08/13/PyNiK8rKij31suR-small.jpg"
+  "Newcastle United": {
+    "Home Jersey": "Jersey_Images/Newcastle Unitedhome-small.jpg",
+    "Away Jersey": "Jersey_Images/Newcastle Unitedaway-small.jpg"
   },
-  "Notting": {
-    "Home Jersey": "https://cdn.footballkitarchive.com/2024/07/21/TOjMpJ7Up7YcrHC-small.jpg",
-    "Away Jersey": "https://cdn.footballkitarchive.com/2024/08/02/pNu685S2S1wd62V-small.jpg"
+  "Nottingham Forest": {
+    "Home Jersey": "Jersey_Images/Nottingham Foresthomesmall.jpg",
+    "Away Jersey": "Jersey_Images/Nottingham Forestaway-small.jpg"
   },
+
   "Sunderland": {
-    "Home Jersey": "https://cdn.footballkitarchive.com/2025/05/24/0Y5unj3eKrTBVxA-small.jpg",
-    "Away Jersey": "https://cdn.footballkitarchive.com/2024/09/17/94JGuIdja7Z1i2e-small.jpg"
+    "Home Jersey": "Jersey_Images/Sunderlandhome-small.jpg",
+    "Away Jersey": "Jersey_Images/Sunderlandaway-small.jpg"
   },
-  "Totenham": {
-    "Home Jersey": "https://cdn.footballkitarchive.com/2025/06/11/tK5ym1liefkKdrr-small.jpg",
-    "Away Jersey": "https://cdn.footballkitarchive.com/2025/06/11/ldR1fVnWkwVOmbu-small.jpg"
+  "Tottenham Hotspur": {
+    "Home Jersey": "Jersey_Images/Tottenham Hotspurhomesmall.jpg",
+    "Away Jersey": "Jersey_Images/Tottenham Hotspuraway-small.jpg"
   },
-  "Westham": {
-    "Home Jersey": "https://cdn.footballkitarchive.com/2024/07/03/3TYo1AyfQbaqO4E-small.jpg",
-    "Away Jersey": "https://cdn.footballkitarchive.com/2024/07/08/diFoCu0dAw99Muv-small.jpg"
+  "West Ham United": {
+    "Home Jersey": "Jersey_Images/West Ham Unitedhome-small.jpg",
+    "Away Jersey": "Jersey_Images/West Ham Unitedaway-small.jpg"
   },
-  "Wolves": {
-    "Home Jersey": "https://cdn.footballkitarchive.com/2024/07/15/22BWti5aiRWMryK-small.jpg",
-    "Away Jersey": "https://cdn.footballkitarchive.com/2024/09/16/KvR8HnpNXmMGfMp-small.jpg"
+  "Wolverhampton Wanderers": {
+    "Home Jersey": "Jersey_Images/Wolverhampton Wanderershome-small.jpg",
+    "Away Jersey": "Jersey_Images/Wolverhampton Wanderersaway-small.jpg"
   }
 }

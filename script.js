@@ -181,18 +181,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // Static mapping for jersey images (start with Arsenal as a test)
-    const jerseyImages = {
-        "Arsenal": {
-            "Home Jersey": "https://i1.adis.ws/i/ArsenalDirect/uwclch25wa_f?&$plpImages$",
-            "Away Jersey": "https://cdn.media.amplience.net/i/ArsenalDirect/800x800_Away_product?w=960&fmt=webp&qlt=80"
-        }
-        // Add more teams here as needed
-    };
+    let jerseyImages = {};
+
+    // Load jerseyImages.json before anything else
+    fetch('jerseyImages.json')
+        .then(response => response.json())
+        .then(data => {
+            jerseyImages = data;
+        });
 
     // Display a grid of available jerseys for a team (only Home and Away)
     function displayJerseyGrid(team) {
-        // Use static images for Arsenal, fallback to API for others
+        // Use static images from jerseyImages.json, fallback to API for others
         let jerseys;
         if (jerseyImages[team.strTeam]) {
             jerseys = [
